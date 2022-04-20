@@ -86,6 +86,9 @@ partition:
             lw $t4, 4($sp)
             lw $t3, 0($sp)
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 171222b (Update quiz4-6.asm)
+=======
 >>>>>>> parent of 171222b (Update quiz4-6.asm)
 =======
 >>>>>>> parent of 171222b (Update quiz4-6.asm)
@@ -108,6 +111,7 @@ partition:
     
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     lw $ra, 8($sp)             # restore
     lw $a0, 4($sp)
     lw $a1, 0($sp)
@@ -116,12 +120,17 @@ partition:
 =======
 =======
 >>>>>>> parent of 171222b (Update quiz4-6.asm)
+=======
+>>>>>>> parent of 171222b (Update quiz4-6.asm)
     lw $ra, 16($sp)             # restore
     lw $a0, 12($sp)
     lw $a1, 8($sp)
     lw $t3, 0($sp)
     addi $sp, $sp, 20
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 171222b (Update quiz4-6.asm)
+=======
 >>>>>>> parent of 171222b (Update quiz4-6.asm)
 =======
 >>>>>>> parent of 171222b (Update quiz4-6.asm)
