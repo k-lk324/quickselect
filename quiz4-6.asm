@@ -1,10 +1,10 @@
 .data
-n: .word 4
-v: .word 3, 10, 8, 2
-k: .word 2
-#n: .word 21
-#v: .word 10, 3, 7, 21, 20, 15, 14, 24, 9, 5, 1, 22, 16, 13, 12, 18, 4, 6, 19, 17, 2
-#k: .word 12
+#n: .word 4
+#v: .word 3, 10, 8, 2
+#k: .word 2
+n: .word 21
+v: .word 10, 3, 7, 21, 20, 15, 14, 24, 9, 5, 1, 22, 16, 13, 12, 18, 4, 6, 19, 17, 2
+k: .word 12
 
 .text
 .globl main
@@ -85,6 +85,9 @@ partition:
             lw $a1, 8($sp)
             lw $t4, 4($sp)
             lw $t3, 0($sp)
+<<<<<<< HEAD
+>>>>>>> parent of 171222b (Update quiz4-6.asm)
+=======
 >>>>>>> parent of 171222b (Update quiz4-6.asm)
             
             addi $t3, $t3, 1            # t3 = t3 + 1
@@ -104,17 +107,23 @@ partition:
     jal swap
     
 <<<<<<< HEAD
+<<<<<<< HEAD
     lw $ra, 8($sp)             # restore
     lw $a0, 4($sp)
     lw $a1, 0($sp)
     #lw $t3, 0($sp)
     addi $sp, $sp, 12
 =======
+=======
+>>>>>>> parent of 171222b (Update quiz4-6.asm)
     lw $ra, 16($sp)             # restore
     lw $a0, 12($sp)
     lw $a1, 8($sp)
     lw $t3, 0($sp)
     addi $sp, $sp, 20
+<<<<<<< HEAD
+>>>>>>> parent of 171222b (Update quiz4-6.asm)
+=======
 >>>>>>> parent of 171222b (Update quiz4-6.asm)
         
     add $v0, $t3, $zero
