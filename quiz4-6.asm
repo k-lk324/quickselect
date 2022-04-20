@@ -73,9 +73,9 @@ partition:
             add $a1, $s0, $zero         # a1 = t4
             jal swap
     
-            lw $ra, 16($sp)             # restore
-            lw $a0, 12($sp)
-            lw $a1, 8($sp)
+            lw $ra, 8($sp)             # restore
+            lw $a0, 4($sp)
+            lw $a1, 0($sp)
            # lw $t4, 4($sp)
            # lw $t3, 0($sp)
             
@@ -97,7 +97,7 @@ partition:
     
     lw $ra, 8($sp)             # restore
     lw $a0, 4($sp)
-    lw $a1, 0($sp
+    lw $a1, 0($sp)
     #lw $t3, 0($sp)
     addi $sp, $sp, 12
         
