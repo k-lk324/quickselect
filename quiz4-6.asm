@@ -1,10 +1,10 @@
 .data
-#n: .word 4
-#v: .word 3, 10, 8, 2
-#k: .word 2
-n: .word 21
-v: .word 10, 3, 7, 21, 20, 15, 14, 24, 9, 5, 1, 22, 16, 13, 12, 18, 4, 6, 19, 17, 2
-k: .word 12
+n: .word 4
+v: .word 3, 10, 8, 2
+k: .word 2
+#n: .word 21
+#v: .word 10, 3, 7, 21, 20, 15, 14, 24, 9, 5, 1, 22, 16, 13, 12, 18, 4, 6, 19, 17, 2
+#k: .word 12
 
 .text
 .globl main
@@ -38,70 +38,70 @@ swap:                           # swap entry point
 
 
 partition:
-    addi $sp, $sp, -20 		    # adjust stack for 5 items
-    sw $ra, 16($sp)             # save return address
-    sw $a0, 12($sp)
-    sw $a1, 8($sp)
+    addi $sp, $sp, -12 		    # adjust stack for 3 items
+    sw $ra, 8($sp)             # save return address
+    sw $a0, 4($sp)
+    sw $a1, 0($sp)
     
     la $t1, v                   # t1 = v
     sll $t2, $a1, 2             # t2 = l*4
     add $t2, $t1, $t2           # t2 = v + l*4
     lw $t8, 0($t2)              # t8 = v[l]
     
-    add $t3, $a0, $zero         # t3 = f = i
+    add $s1, $a0, $zero         # s1 = f = i
     
-    add $t4, $a0, $zero         # t4 = f =j
+    add $s0, $a0, $zero         # s0 = f =j
     start_for:
-        slt $t0, $t4, $a1           # if not (t4 < a1)
+        slt $t0, $s0, $a1           # if not (s0 < a1)
         beq $t0, $zero, end_for     # branch to end_for
         
-        sll $t5, $t4, 2             # t5= t4 * 4
+        sll $t5, $s0, 2             # t5= s0 * 4
         la $t1, v		            # t1 = address v
         add $t5, $t1, $t5           # t5 = v + t5
     
-        lw $t7 0($t5)               # t7 = v[t4]
+        lw $t7 0($t5)               # t7 = v[s0]
         
         slt $t0, $t7, $t8           # if not (t7 < t8)
         beq $t0, $zero, end_if      # branch to end_if
         
     
-            sw $t4, 4($sp)              #save t3 and t4
-            sw $t3, 0($sp)
+            #sw $t4, 4($sp)              #save t3 and t4
+            #sw $t3, 0($sp)
         
         
-            add $a0, $t3, $zero         # a0 = t3
-            add $a1, $t4, $zero         # a1 = t4
+            add $a0, $s1, $zero         # a0 = s1
+            add $a1, $s0, $zero         # a1 = t4
             jal swap
     
             lw $ra, 16($sp)             # restore
             lw $a0, 12($sp)
             lw $a1, 8($sp)
-            lw $t4, 4($sp)
-            lw $t3, 0($sp)
+           # lw $t4, 4($sp)
+           # lw $t3, 0($sp)
             
-            addi $t3, $t3, 1            # t3 = t3 + 1
+            addi $s1, $s1, 1            # s1 = s1 + 1
     
         end_if:
     
     
-        addi $t4, $t4, 1            # t4++
+        addi $s0, $s0, 1            # s0++
         j start_for
     end_for:
       
-    sw $t4, 4($sp)
-    sw $t3, 0($sp)   
+    #sw $t4, 4($sp)
+    sw $s1, 0($sp)   
                             
-    add $a0, $t3, $zero         # a0 = t3
+    add $a0, $s1, $zero         # a0 = s1
     lw $a1, 8($sp)		        # a1 = l
     jal swap
     
-    lw $ra, 16($sp)             # restore
-    lw $a0, 12($sp)
-    lw $a1, 8($sp)
-    lw $t3, 0($sp)
-    addi $sp, $sp, 20
+    lw $ra, 8($sp)             # restore
+    lw $a0, 4($sp)
+    lw $a1, 0($sp
+    #lw $t3, 0($sp)
+    addi $sp, $sp, 12
         
-    add $v0, $t3, $zero
+    move $v0, $s1
     
     jr      $ra
 
