@@ -1,10 +1,10 @@
 .data
-n: .word 4
-v: .word 3, 10, 8, 2
-k: .word 2
-#n: .word 21
-#v: .word 10, 3, 7, 21, 20, 15, 14, 24, 9, 5, 1, 22, 16, 13, 12, 18, 4, 6, 19, 17, 2
-#k: .word 12
+#n: .word 4
+#v: .word 3, 10, 8, 2
+#k: .word 2
+n: .word 21
+v: .word 10, 3, 7, 21, 20, 15, 14, 24, 9, 5, 1, 22, 16, 13, 12, 18, 4, 6, 19, 17, 2
+k: .word 12
 
 .text
 .globl main
@@ -15,7 +15,7 @@ la $t1, k
 
 add $a0, $zero, $zero			# variable: f : (0 .. n-1) 0
 lw $a1, 0($t0) # a1 = n			# variable: l : (0 .. n-1) n-1
-#addi $a1, $a1, -1 #a1 = n-1
+addi $a1, $a1, -1 #a1 = n-1
 lw $a2, 0($t1) #a2 = k			# variable: k : (0 .. n-1) 1st, 2nd,... minumum number
 
 add $t9, $zero, $zero 			# counter t9 = 0
