@@ -27,23 +27,25 @@ swap:                   # swap entry point
 
     jr $ra
 
-partition:
+partition:              #partition entry point
     # a0 = f
     # a1 = l
+
+    #save parameters and ra to stack 
 
     #int pivot = v[l]
     #int i = f
 
     #int j = f
-for: 
-    #if !(j<l) go to end_for
+for_partition: 
+    #if !(j<l) go to end_for_partition
 
-    #if !(v[j] < pivot) goto for
+    #if !(v[j] < pivot) goto for_partition
     #swap(i++,j)
 
     #j++
-    #goto for
-end_for:
+    #goto for_partition
+end_for_partition:
 
     #swap(i, l)
     
@@ -56,17 +58,17 @@ qselect:
     # a1 = l
     # a2 = k
 
-if_1:
+if_1_qselect:
     # int p = partition(f, l)
 
-if_2:
+if_2_qselect:
     #if (p - f == k)
         #return v[p]
-else_if_2:
+else_if_2_qselect:
     #if (p - f > k)
         #return qselect(f, p - 1, k)
-else_2:
+else_2_qselect:
     #return qselect(p + 1, l, k - p + f - 1);
 
-end_if_1:
+end_if_1_qselect:
     #return v[f];
