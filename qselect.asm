@@ -77,7 +77,7 @@ swap:                   # swap entry point
 
 
 
-partition:
+partition:                      # partition entry point
     addi $sp, $sp, -20 		    # adjust stack for 5 items
     sw $ra, 16($sp)             # save return address
     sw $a0, 12($sp)
@@ -134,7 +134,7 @@ partition:
     lw $a1, 8($sp)		        # a1 = l
     jal swap
     
-    lw $ra, 16($sp)             # restore
+    lw $ra, 16($sp)             # restore ra, parameters and t3
     lw $a0, 12($sp)
     lw $a1, 8($sp)
     lw $t3, 0($sp)
