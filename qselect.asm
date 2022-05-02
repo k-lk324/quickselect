@@ -83,34 +83,38 @@ partition:                      # partition entry point
     sw $a0, 12($sp)
     sw $a1, 8($sp)
     
+    #int pivot = v[l]
     la $t1, v                   # t1 = v
     sll $t2, $a1, 2             # t2 = l*4
     add $t2, $t1, $t2           # t2 = v + l*4
     lw $t8, 0($t2)              # t8 = v[l]
     
+    #int j = f
     move $t3, $a0               # t3 = f = i
     
     move $t4, $a0               # t4 = f = j
     start_for:
+    #if !(j<l) go to end_for
         slt $t0, $t4, $a1           # if not (t4 < a1)
         beq $t0, $zero, end_for     # branch to end_for
         
-        sll $t5, $t4, 2             # t5= t4 * 4
+        sll $t5, $t4, 2             # t5= i * 4
         la $t1, v		            # t1 = address v
-        add $t5, $t1, $t5           # t5 = v + t5
+        add $t5, $t1, $t5           # t5 = v + i*4
     
-        lw $t7 0($t5)               # t7 = v[t4]
+        lw $t7 0($t5)               # t7 = v[i]
         
+        #if !(v[j] < pivot) goto end_if
         slt $t0, $t7, $t8           # if not (t7 < t8)
         beq $t0, $zero, end_if      # branch to end_if
         
     
-            sw $t4, 4($sp)              #save t3 and t4
+            sw $t4, 4($sp)              #store t3 and t4
             sw $t3, 0($sp)
         
-        
-            add $a0, $t3, $zero         # a0 = t3
-            add $a1, $t4, $zero         # a1 = t4
+            #swap(i,j)
+            add $a0, $t3, $zero         # a0 = t3 = i
+            add $a1, $t4, $zero         # a1 = t4 = j
             jal swap
     
             lw $ra, 16($sp)             # restore
@@ -118,11 +122,13 @@ partition:                      # partition entry point
             lw $a1, 8($sp)
             lw $t4, 4($sp)
             lw $t3, 0($sp)
+
+            #i++
             addi $t3, $t3, 1            # t3 = t3 + 1
     
         end_if:
     
-    
+        #j++
         addi $t4, $t4, 1            # t4++
         j start_for
     end_for:
@@ -134,12 +140,13 @@ partition:                      # partition entry point
     lw $a1, 8($sp)		        # a1 = l
     jal swap
     
-    lw $ra, 16($sp)             # restore ra, parameters and t3
+    lw $ra, 16($sp)             # restore registers
     lw $a0, 12($sp)
     lw $a1, 8($sp)
     lw $t3, 0($sp)
-    addi $sp, $sp, 20
-        
+    addi $sp, $sp, 20           #restore stack pointer
+
+    #return (i) 
     move $v0, $t3
     
     jr      $ra
