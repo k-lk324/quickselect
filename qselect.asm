@@ -1,31 +1,28 @@
 .data
-n: .word 6
-v: .word 3, 10, 8, 2, 13, 1
-k: .word 0
-#n: .word 21
-#v: .word 10, 3, 7, 21, 20, 15, 14, 24, 9, 5, 1, 22, 16, 13, 12, 18, 4, 6, 19, 17, 2
-#k: .word 12
+
+n:    .word    21
+v:    .word    10, 3, 7, 21, 20, 15, 14, 24, 9, 5, 1, 22, 16, 13, 12, 18, 4, 6, 19, 17, 2
+k:    .word    12
 
 .text
-.globl main
 
 main:
-la $t0, n
-la $t1, k
+    li    $a0, 0            #$a0 init
 
-add $a0, $zero, $zero			# variable: f : (0 .. n-1) 0
-lw $a1, 0($t0) # a1 = n			# variable: l : (0 .. n-1) n-1
-addi $a1, $a1, -1 #a1 = n-1
-lw $a2, 0($t1) #a2 = k			# variable: k : (0 .. n-1) 1st, 2nd,... minumum number
+    la    $t0, n            #$a1 init
+    lw    $a1, 0($t0)
+    li    $t0, 1
+    sub    $a1, $a1, $t0
 
-jal qselect
+    la    $t0, k            #$a2 init
+    lw    $a2, 0($t0)
 
-move $a0, $v0
-addi $v0, $zero, 1
-syscall
+    jal    qselect
 
-addi $v0, $zero, 10
-syscall
+    move    $v1, $v0        #$v1 output of qselect
+
+    li    $v0, 10
+    syscall
 
 
 swap:                   # swap entry point
@@ -49,107 +46,80 @@ swap:                   # swap entry point
 
     jr $ra
 
-#partition:              #partition entry point
+partition:                      #partition entry point
     # a0 = f
     # a1 = l
 
     #save parameters and ra to stack
-    #sp += 
+    addi $sp, $sp, -24 		    # adjust stack for 3 items
+    sw $ra, 16($sp)             # save return address
+    sw $a0, 12($sp)             # f --> sp + 4
+    sw $a1, 8($sp)              # l --> sp
 
     #int pivot = v[l]
+    la $t0, v                   # t0 = address of v
+    sll $t1, $a1, 2             # t1 = l*4
+    add $t1, $t1, $t0           # t1 = address of v[l]
+    lw $t2, 0($t1)              # t2 = v[l]
+
     #int i = f
+    move $t0, $a0               # t0 = f
 
     #int j = f
-#for_partition: 
-    #if !(j<l) go to end_for_partition
+    move $t1, $a0               # t1 = f
+
+for_partition: 
+    #if !(j<l) goto end_for_partition
+    slt $t3, $t1, $t0           # if !(t1 < t0): t3 = 0
+    beq $t3, $zero, end_for_partition   # if t3 ==0 branch to end_for_partition
 
     #if !(v[j] < pivot) goto for_partition
+    la $t3, v                   # t3 = address of v
+    sll $t4, $t1, 2             # t4 = 4*j
+    add $t4, $t3, $t4           # t4 = address of v[j]
+    lw $t4, 0($t4)              # t4 = v[j]
+
+    slt $t3, $t4, $t2           # if !(t4 < t2): t3 = 0
+    beq $t3, $zero, end_if      # if t3==0: branch to end_if
+
     #swap(i++,j)
+    move $a0, $t0               # a0 = i
+    move $a1, $t1               # a1 = j
+
+    #store i and j and pivot
+    sw $t0, 4($sp)              # t0 --> sp +4
+    sw $t1, 0($sp)              # t1 --> sp +0
+    sw $t2, 20($sp)             # t2 --> sp +20
+
+    jal swap
+
+    #restore
+    sw $t2, 20($sp)             # t2 --> sp +20
+    lw $t1, 0($sp)
+    lw $t0, 4($sp)
+    lw $ra, 16($sp)
+
+end_if:
 
     #j++
+    addi $t1, $t1, 1
+
     #goto for_partition
-#end_for_partition:
+    j for_partition
+
+end_for_partition:
 
     #swap(i, l)
+    move $v0, $t0                # result is (i)
+    move $a0, $t0                # a0 = i
+    lw $a1, 12($sp)              # a1 = l
+
+    lw $ra, 16($sp)              # restore return address
+    addi $sp, $sp, 20            # restore stack pointer
     
-    #return (i)
- #   jr $ra
+   jr $ra                        # return to caller
 
 
-
-partition:                      # partition entry point
-    addi $sp, $sp, -20 		    # adjust stack for 5 items
-    sw $ra, 16($sp)             # save return address
-    sw $a0, 12($sp)
-    sw $a1, 8($sp)
-    
-    #int pivot = v[l]
-    la $t1, v                   # t1 = v
-    sll $t2, $a1, 2             # t2 = l*4
-    add $t2, $t1, $t2           # t2 = v + l*4
-    lw $t8, 0($t2)              # t8 = v[l]
-    
-    #int j = f
-    move $t3, $a0               # t3 = f = i
-    
-    move $t4, $a0               # t4 = f = j
-    start_for:
-    #if !(j<l) go to end_for
-        slt $t0, $t4, $a1           # if not (t4 < a1)
-        beq $t0, $zero, end_for     # branch to end_for
-        
-        sll $t5, $t4, 2             # t5= i * 4
-        la $t1, v		            # t1 = address v
-        add $t5, $t1, $t5           # t5 = v + i*4
-    
-        lw $t7 0($t5)               # t7 = v[i]
-        
-        #if !(v[j] < pivot) goto end_if
-        slt $t0, $t7, $t8           # if not (t7 < t8)
-        beq $t0, $zero, end_if      # branch to end_if
-        
-    
-            sw $t4, 4($sp)              #store t3 and t4
-            sw $t3, 0($sp)
-        
-            #swap(i,j)
-            add $a0, $t3, $zero         # a0 = t3 = i
-            add $a1, $t4, $zero         # a1 = t4 = j
-            jal swap
-    
-            lw $ra, 16($sp)             # restore
-            lw $a0, 12($sp)
-            lw $a1, 8($sp)
-            lw $t4, 4($sp)
-            lw $t3, 0($sp)
-
-            #i++
-            addi $t3, $t3, 1            # t3 = t3 + 1
-    
-        end_if:
-    
-        #j++
-        addi $t4, $t4, 1            # t4++
-        j start_for
-    end_for:
-      
-    sw $t4, 4($sp)
-    sw $t3, 0($sp)   
-                            
-    move $a0, $t3               # a0 = t3
-    lw $a1, 8($sp)		        # a1 = l
-    jal swap
-    
-    lw $ra, 16($sp)             # restore registers
-    lw $a0, 12($sp)
-    lw $a1, 8($sp)
-    lw $t3, 0($sp)
-    addi $sp, $sp, 20           #restore stack pointer
-
-    #return (i) 
-    move $v0, $t3
-    
-    jr      $ra
 
 qselect:
     # a0 = f
@@ -210,7 +180,7 @@ else_2_qselect:
 
 end_if_1_qselect:
     #return v[f]
-    la $t0, v                          # t0 = address of v
+    la $t0, v                           # t0 = address of v
     sll $t1, $a0, 2                     # t1 = 4*a0(f)
     add $t0, $t0, $t1                   # t0 = address of v[f]
     lw $v0, 0($t0)                      # v0 = v[f]
@@ -218,6 +188,6 @@ end_if_1_qselect:
     j end_qselect
 
 end_qselect:
-    addi $sp, $sp, 4
+    addi $sp, $sp, 4                    # restore stack pointer
 
-    jr $ra                              # return
+    jr $ra                              # return to caller
